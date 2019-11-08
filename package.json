@@ -1,0 +1,15 @@
+{
+  "name": "rocky",
+  "version": "1.0.0",
+  "description": "A websocket server for street fighter.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node WebSocket.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^7.2.0"
+  }
+}
