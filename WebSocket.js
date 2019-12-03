@@ -59,7 +59,7 @@ wss.on('connection', function(ws) {
 });
 
 function registerMove(gameCode, clientNumber, movement, isHit) {
-    let session = gameSessions[gameCode];
+    const session = gameSessions[gameCode];
 
     if (clientNumber === 1) {
         if (isHit) {
@@ -68,7 +68,7 @@ function registerMove(gameCode, clientNumber, movement, isHit) {
         clients[session.clientTwo].send(`<update_movement> (playerOne) {${movement}} ~${session.healthPlayerTwo}~`);
     } else {
         if (isHit) {
-            session.healthPlayerOne -= 25;
+            session.healthPlayerOne -= 25
         }
         clients[session.clientOne].send(`<update_movement> (playerTwo) {${movement}} ~${session.healthPlayerOne}~ `);
     }
