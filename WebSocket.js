@@ -31,7 +31,7 @@ wss.on('connection', function(ws) {
                 break;
             case 'movePlayer1':
                 registerMove(
-                    message.match(/\(([^)]+)\)/)[1],
+                    message.substr(message.indexOf('[') + 1, message.indexOf(']') - message.indexOf('[') - 1),
                     1,
                     message.substr(message.indexOf('{') + 1, message.indexOf('}') - message.indexOf('{') - 1),
                     message.substr(message.indexOf('(') + 1, message.indexOf(')') - message.indexOf('(') - 1)
@@ -39,7 +39,7 @@ wss.on('connection', function(ws) {
                 break;
             case 'movePlayer2':
                 registerMove(
-                    message.match(/\(([^)]+)\)/)[1],
+                    message.substr(message.indexOf('[') + 1, message.indexOf(']') - message.indexOf('[') - 1),
                     2,
                     message.substr(message.indexOf('{') + 1, message.indexOf('}') - message.indexOf('{') - 1),
                     message.substr(message.indexOf('(') + 1, message.indexOf(')') - message.indexOf('(') - 1)
@@ -60,7 +60,7 @@ wss.on('connection', function(ws) {
 
 function registerMove(gameCode, clientNumber, movement, isHit) {
     const session = gameSessions[gameCode];
-
+    console.log(session);
     if (clientNumber === 1) {
         if (isHit) {
             session.healthPlayerTwo -= 25;
@@ -68,9 +68,9 @@ function registerMove(gameCode, clientNumber, movement, isHit) {
         clients[session.clientTwo].send(`<update_movement> (playerOne) {${movement}} ~${session.healthPlayerTwo}~`);
     } else {
         if (isHit) {
-            session.healthPlayerOne -= 25
+            session.healthPlayerOne -= 25;
         }
-        clients[session.clientOne].send(`<update_movement> (playerTwo) {${movement}} ~${session.healthPlayerOne}~ `);
+        clients[session.clientOne].send(`<update_movement> (playerTwo) {${movement}} ~${session.healthPlayerOne}~`);
     }
 }
 
