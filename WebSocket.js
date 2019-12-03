@@ -30,10 +30,20 @@ wss.on('connection', function(ws) {
                 connectPlayerToGame(message.match(/\(([^)]+)\)/)[1], id);
                 break;
             case 'movePlayer1':
-                registerMove(message.match(/\(([^)]+)\)/)[1], 1, message.substr(message.indexOf("{") + 1, message.indexOf("}") - message.indexOf("{") - 1), message.substr(message.indexOf("(") + 1, message.indexOf(")") - message.indexOf("(") - 1));
+                registerMove(
+                    message.match(/\(([^)]+)\)/)[1],
+                    1,
+                    message.substr(message.indexOf('{') + 1, message.indexOf('}') - message.indexOf('{') - 1),
+                    message.substr(message.indexOf('(') + 1, message.indexOf(')') - message.indexOf('(') - 1)
+                );
                 break;
             case 'movePlayer2':
-                registerMove(message.match(/\(([^)]+)\)/)[1], 2, message.substr(message.indexOf("{") + 1, message.indexOf("}") - message.indexOf("{") - 1), message.substr(message.indexOf("(") + 1, message.indexOf(")") - message.indexOf("(") - 1));
+                registerMove(
+                    message.match(/\(([^)]+)\)/)[1],
+                    2,
+                    message.substr(message.indexOf('{') + 1, message.indexOf('}') - message.indexOf('{') - 1),
+                    message.substr(message.indexOf('(') + 1, message.indexOf(')') - message.indexOf('(') - 1)
+                );
                 break;
             default:
                 console.log('NOT FOUND');
@@ -49,19 +59,19 @@ wss.on('connection', function(ws) {
 });
 
 function registerMove(gameCode, clientNumber, movement, isHit) {
-      let session = gameSessions[gameCode];
+    let session = gameSessions[gameCode];
 
-      if (clientNumber === 1) {
+    if (clientNumber === 1) {
         if (isHit) {
-          healthPlayerTwo -= 25;
+            session.healthPlayerTwo -= 25;
         }
-        clients[session.clientTwo].send(`<update_movement> (playerOne) {${movement}}`)
-      } else {
+        clients[session.clientTwo].send(`<update_movement> (playerOne) {${movement}} ~${session.healthPlayerTwo}~`);
+    } else {
         if (isHit) {
-          healthPlayerOne -= 25;
+            session.healthPlayerOne -= 25;
         }
-        clients[session.clientOne].send(`<update_movement> (playerTwo) {${movement}}`)
-      }
+        clients[session.clientOne].send(`<update_movement> (playerTwo) {${movement}} ~${session.healthPlayerOne}~ `);
+    }
 }
 
 function intializeNewGame(id) {
@@ -79,10 +89,9 @@ function intializeNewGame(id) {
 function connectPlayerToGame(gameCode, clientTwoId) {
     const currentSession = gameSessions[gameCode];
     currentSession.clientTwo = clientTwoId;
-    clients[currentSession.clientTwo].send('<game> (start)');
-    clients[currentSession.clientOne].send('<game> (start)');
+    clients[currentSession.clientTwo].send(`<game> (start) [${gameCode}]`);
+    clients[currentSession.clientOne].send(`<game> (start) [${gameCode}]`);
 }
-
 
 //Schema:
 //<clientNumber> [gameCode] {movement} (collisionDetected) **if collison detect opposite client health depleted;
