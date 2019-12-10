@@ -121,7 +121,7 @@ function registerHealth(gameCode, amtOfHealth, playerNum) {
   );
   const session = gameSessions[gameCode];
 
-  if (playerNum == 1) {
+  if (playerNum === "1") {
     session.healthPlayerOne -= 5;
     clients[session.clientOne].send(
       `<update_health> (playerOne) {${session.healthPlayerOne}}`
@@ -131,13 +131,13 @@ function registerHealth(gameCode, amtOfHealth, playerNum) {
     );
   }
 
-  if (playerNum == 2) {
+  if (playerNum === "2") {
     session.healthPlayerTwo -= 5;
     clients[session.clientOne].send(
       `<update_health> (playerTwo) {${session.healthPlayerTwo}}`
     );
     clients[session.clientTwo].send(
-      `<update_health> (playerOne) {${session.healthPlayerTwo}}`
+      `<update_health> (playerTwo) {${session.healthPlayerTwo}}`
     );
   }
 }
