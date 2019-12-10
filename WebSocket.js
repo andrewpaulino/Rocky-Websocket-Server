@@ -125,6 +125,7 @@ function registerHealth(gameCode, amtOfHealth, playerNum, isUserPlayerTwo) {
     `HIT on player number ${playerNum} taking off ${amtOfHealth} from HP`
   );
   const session = gameSessions[gameCode];
+    console.log("ISUSER: ", isUserPlayerTwo);
   if (isUserPlayerTwo === "true") {
     if (playerNum === "1") {
       session.healthPlayerTwo -= 5;
