@@ -89,8 +89,13 @@ wss.on("connection", function(ws) {
           message.substr(
             message.indexOf("(") + 1,
             message.indexOf(")") - message.indexOf("(") - 1
+          ),
+          message.substr(
+            message.indexOf("*") + 1,
+            message.indexOf("&") - message.indexOf("*") - 1
           )
         );
+        break;
       default:
         console.log("NOT FOUND");
     }
@@ -115,30 +120,51 @@ function registerGameEnded(gameCode, playerNum) {
   clients[game.clientOne].send(`<game_ended> (${dude})`);
   clients[game.clientTwo].send(`<game_ended> (${dude})`);
 }
-function registerHealth(gameCode, amtOfHealth, playerNum) {
+function registerHealth(gameCode, amtOfHealth, playerNum, isUserPlayerTwo) {
   console.log(
     `HIT on player number ${playerNum} taking off ${amtOfHealth} from HP`
   );
   const session = gameSessions[gameCode];
-
-  if (playerNum === "1") {
-    session.healthPlayerOne -= 5;
-    clients[session.clientOne].send(
-      `<update_health> (playerOne) {${session.healthPlayerOne}}`
-    );
-    clients[session.clientTwo].send(
-      `<update_health> (playerTwo) {${session.healthPlayerOne}}`
-    );
-  }
-//
-  if (playerNum === "2") {
-    session.healthPlayerTwo -= 5;
-    clients[session.clientOne].send(
-      `<update_health> (playerTwo) {${session.healthPlayerTwo}}`
-    );
-    clients[session.clientTwo].send(
-      `<update_health> (playerOne) {${session.healthPlayerTwo}}`
-    );
+  if (isUserPlayerTwo === "true") {
+    if (playerNum === "1") {
+      session.healthPlayerTwo -= 5;
+      clients[session.clientOne].send(
+        `<update_health> (playerTwo) {${session.healthPlayerTwo}}`
+      );
+      clients[session.clientTwo].send(
+        `<update_health> (playerOne) {${session.healthPlayerTwo}}`
+      );
+    }
+    //
+    if (playerNum === "2") {
+      session.healthPlayerOne -= 5;
+      clients[session.clientOne].send(
+        `<update_health> (playerOne) {${session.healthPlayerOne}}`
+      );
+      clients[session.clientTwo].send(
+        `<update_health> (playerTwo) {${session.healthPlayerOne}}`
+      );
+    }
+  } else {
+    if (playerNum === "1") {
+      session.healthPlayerOne -= 5;
+      clients[session.clientOne].send(
+        `<update_health> (playerOne) {${session.healthPlayerOne}}`
+      );
+      clients[session.clientTwo].send(
+        `<update_health> (playerTwo) {${session.healthPlayerOne}}`
+      );
+    }
+    //
+    if (playerNum === "2") {
+      session.healthPlayerTwo -= 5;
+      clients[session.clientOne].send(
+        `<update_health> (playerTwo) {${session.healthPlayerTwo}}`
+      );
+      clients[session.clientTwo].send(
+        `<update_health> (playerOne) {${session.healthPlayerTwo}}`
+      );
+    }
   }
 }
 function registerMove(gameCode, clientNumber, movement, isHit) {
