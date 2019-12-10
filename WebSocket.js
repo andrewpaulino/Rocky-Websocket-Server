@@ -105,9 +105,15 @@ wss.on("connection", function(ws) {
 });
 function registerGameEnded(gameCode, playerNum) {
   game = gameSessions[gameCode];
-
-  clients[game.clientOne].send(`<game_ended> (${playerNum})`);
-  clients[game.clientTwo].send(`<game_ended> (${playerNum})`);
+  let dude;
+  if (playerNum == 1) {
+    dude = "playerOne";
+  }
+  if (playerNum == 2) {
+    dude = "playerTwo";
+  }
+  clients[game.clientOne].send(`<game_ended> (${dude})`);
+  clients[game.clientTwo].send(`<game_ended> (${dude})`);
 }
 function registerHealth(gameCode, amtOfHealth, playerNum) {
   console.log(
