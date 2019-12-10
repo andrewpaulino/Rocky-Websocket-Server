@@ -47,6 +47,26 @@ wss.on("connection", function(ws) {
           )
         );
         break;
+      case "game_ended":
+        gameSessions[
+          message.substr(
+            message.indexOf("[") + 1,
+            message.indexOf("]") - message.indexOf("[") - 1
+          )
+        ];
+        clients[
+          gameSessions[
+            message.substr(
+              message.indexOf("[") + 1,
+              message.indexOf("]") - message.indexOf("[") - 1
+            )
+          ]
+        ].send(
+          `<game_ended> ${message.substr(
+            message.indexOf("(") + 1,
+            message.indexOf(")") - message.indexOf("(") - 1
+          )}`
+        );
       case "movePlayer2":
         registerMove(
           message.substr(
