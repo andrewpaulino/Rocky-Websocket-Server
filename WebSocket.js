@@ -48,25 +48,17 @@ wss.on("connection", function(ws) {
         );
         break;
       case "game_ended":
-        gameSessions[
+        registerGameEnded(
           message.substr(
             message.indexOf("[") + 1,
             message.indexOf("]") - message.indexOf("[") - 1
-          )
-        ];
-        clients[
-          gameSessions[
-            message.substr(
-              message.indexOf("[") + 1,
-              message.indexOf("]") - message.indexOf("[") - 1
-            )
-          ]
-        ].send(
-          `<game_ended> ${message.substr(
+          ),
+          message.substr(
             message.indexOf("(") + 1,
             message.indexOf(")") - message.indexOf("(") - 1
-          )}`
+          )
         );
+        break;
       case "movePlayer2":
         registerMove(
           message.substr(
@@ -111,13 +103,19 @@ wss.on("connection", function(ws) {
     clearInterval(id);
   });
 });
+function registerGameEnded(gameCode, playerNum) {
+  game = gameSessions[gameCode];
+
+  clients[game.clientOne].send(`<game_ended> (${playerNum})`);
+  clients[game.clientTwo].send(`<game_ended> (${playerNum})`);
+}
 function registerHealth(gameCode, amtOfHealth, playerNum) {
   console.log(
     `HIT on player number ${playerNum} taking off ${amtOfHealth} from HP`
   );
   const session = gameSessions[gameCode];
 
-  if (playerNum === 1) {
+  if (playerNum == 1) {
     session.healthPlayerOne -= 1;
     clients[session.clientOne].send(
       `<update_health> (playerOne) {${session.healthPlayerOne}}`
@@ -127,7 +125,7 @@ function registerHealth(gameCode, amtOfHealth, playerNum) {
     );
   }
 
-  if (playerNum === 2) {
+  if (playerNum == 2) {
     session.healthPlayerTwo -= 1;
     clients[session.clientOne].send(
       `<update_health> (playerTwo) {${session.healthPlayerTwo}}`
