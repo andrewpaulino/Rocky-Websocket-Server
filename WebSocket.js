@@ -64,21 +64,21 @@ wss.on("connection", function(ws) {
           )
         );
         break;
-        case "hit":
-          registerHealth(
-            message.substr(
-              message.indexOf("[") + 1,
-              message.indexOf("]") - message.indexOf("[") - 1
-            ),
-            message.substr(
-              message.indexOf("{") + 1,
-              message.indexOf("}") - message.indexOf("{") - 1
-            ),
-            message.substr(
-              message.indexOf("(") + 1,
-              message.indexOf(")") - message.indexOf("(") - 1
-            )
+      case "hit":
+        registerHealth(
+          message.substr(
+            message.indexOf("[") + 1,
+            message.indexOf("]") - message.indexOf("[") - 1
+          ),
+          message.substr(
+            message.indexOf("{") + 1,
+            message.indexOf("}") - message.indexOf("{") - 1
+          ),
+          message.substr(
+            message.indexOf("(") + 1,
+            message.indexOf(")") - message.indexOf("(") - 1
           )
+        );
       default:
         console.log("NOT FOUND");
     }
@@ -92,21 +92,29 @@ wss.on("connection", function(ws) {
   });
 });
 function registerHealth(gameCode, amtOfHealth, playerNum) {
-  console.log(`HIT on player number ${playerNum} taking off ${amtOfHealth} from HP`)
+  console.log(
+    `HIT on player number ${playerNum} taking off ${amtOfHealth} from HP`
+  );
   const session = gameSessions[gameCode];
 
   if (playerNum === 1) {
-    session.healthPlayerOne -= 5;
+    session.healthPlayerOne -= 1;
+    clients[session.clientOne].send(
+      `<update_health> (playerOne) {${session.healthPlayerOne}}`
+    );
     clients[session.clientTwo].send(
       `<update_health> (playerOne) {${session.healthPlayerOne}}`
-    )
+    );
   }
 
   if (playerNum === 2) {
-    session.healthPlayerTwo -= 5;
-    clients[session.clientTwo].send(
+    session.healthPlayerTwo -= 1;
+    clients[session.clientOne].send(
       `<update_health> (playerTwo) {${session.healthPlayerTwo}}`
-    )
+    );
+    clients[session.clientTwo].send(
+      `<update_health> (playerOne) {${session.healthPlayerTwo}}`
+    );
   }
 }
 function registerMove(gameCode, clientNumber, movement, isHit) {
